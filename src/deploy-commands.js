@@ -24,13 +24,18 @@ for (const item of commandItems) {
 
 function loadCommand(filePath) {
     let command = require(filePath);
-    
     if (command.default) command = command.default;
 
-    if ('data' in command && 'execute' in command) {
-        commands.push(command.data.toJSON());
-    } else {
-        console.log(`[WARNING] The command at ${filePath} is missing required "data" or "execute" properties.`);
+    // Check if the file exports an array (like your ticket.js) or a single object
+    const commandData = Array.isArray(command.data) ? command.data : [command.data];
+
+    for (const data of commandData) {
+        if (data && (data.name || (data.toJSON && data.toJSON().name))) {
+            // Only call toJSON() if it's a Builder instance; otherwise use as is
+            commands.push(typeof data.toJSON === 'function' ? data.toJSON() : data);
+        } else {
+            console.log(`[WARNING] The command at ${filePath} is missing "data" or "execute".`);
+        }
     }
 }
 
