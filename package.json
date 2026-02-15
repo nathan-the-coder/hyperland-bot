@@ -2,9 +2,9 @@
   "name": "hyperland-bot",
   "version": "1.0.0",
   "description": "An discord bot that manages Hyperland Network Discord Server",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node main.js",
     "deploy": "node deploy-commands.js"
   },
   "repository": {
