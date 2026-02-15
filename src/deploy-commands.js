@@ -1,16 +1,11 @@
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-require('dotenv/config');
+const { REST, Routes } = require('discord.js');
+const { clientId, guildId, token } = require('../config.json');
 const fs = require('fs');
 const path = require('path');
 
-const client = new Client({ 
-    intents: [GatewayIntentBits.Guilds] 
-});
-
-client.commands = new Collection();
-
 const commandsPath = path.join(__dirname, 'commands');
 const commandItems = fs.readdirSync(commandsPath);
+const commands = [];
 
 for (const item of commandItems) {
     const itemPath = path.join(commandsPath, item);
@@ -33,34 +28,23 @@ function loadCommand(filePath) {
     if (command.default) command = command.default;
 
     if ('data' in command && 'execute' in command) {
-        client.commands.set(command.data.name, command);
+        commands.push(command.data.toJSON());
     } else {
         console.log(`[WARNING] The command at ${filePath} is missing required "data" or "execute" properties.`);
     }
 }
 
-client.on(Events.InteractionCreate, async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
-    
-    const command = client.commands.get(interaction.commandName);
-    if (!command) {
-        console.error(`No command matching ${interaction.commandName} was found.`);
-        return;
-    }
-    
+const rest = new REST({ version: '10' }).setToken(token);
+
+(async () => {
     try {
-        await command.execute(interaction);
+        console.log(`Registering ${commands.length} slash commands...`);
+        await rest.put(
+            Routes.applicationGuildCommands(clientId, guildId),
+            { body: commands }
+        );
+        console.log('Slash commands registered!');
     } catch (error) {
-        console.error(error);
-        await interaction.reply({ 
-            content: 'There was an error while executing this command!', 
-            ephemeral: true 
-        });
+        console.error('Error registering commands:', error);
     }
-});
-
-client.once(Events.ClientReady, (readyClient) => {
-    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
-
-client.login(process.env.DISCORD_TOKEN);
+})();
