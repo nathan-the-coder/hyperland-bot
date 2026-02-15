@@ -1,9 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder } = require('discord.js');
 const actions = require('../../utils/ticket_actions');
 
-//SLASH COMMAND DEPLOYMENT
-const slashCommands = [
-    new SlashCommandBuilder()
+module.exports = {
+    data: new SlashCommandBuilder()
         .setName('ticket')
         .setDescription('Ticket commands')
         .addSubcommand(s => s.setName('new').setDescription('Open a ticket').addStringOption(o => o.setName('reason').setDescription('Reason')))
@@ -15,15 +14,12 @@ const slashCommands = [
         .addSubcommand(s => s.setName('rename').setDescription('Rename ticket (Staff Only)').addStringOption(o => o.setName('name').setDescription('New name').setRequired(true)))
         .addSubcommand(s => s.setName('add').setDescription('Add user (Staff Only)').addUserOption(o => o.setName('target').setDescription('User').setRequired(true)))
         .addSubcommand(s => s.setName('remove').setDescription('Remove user (Staff Only)').addUserOption(o => o.setName('target').setDescription('User').setRequired(true))),
-].map(c => c.toJSON());
 
-module.exports = {
-    data: slashCommands[0],
     async execute(interaction) {
         // Identify which subcommand was used
         const sub = interaction.options.getSubcommand();
         const { guild, channel, user, options } = interaction;
-        
+
         // Acknowledge the interaction
         // Some actions take seconds so defer or reply immediately
 
@@ -33,10 +29,12 @@ module.exports = {
             // Map subcommands to actions object
             switch (sub) {
                 case 'new':
-                    const reason = options.getString('reason');
-                    result = await actions.new(guild, user, reason);
-                    break;
-                
+                    {
+                        const reason = options.getString('reason');
+                        result = await actions.new(guild, user, reason);
+                        break;
+                    }
+
                 case 'help':
                     result = actions.help();
                     break;
@@ -47,14 +45,18 @@ module.exports = {
 
                 case 'add':
                 case 'remove':
-                    const target = options.getString('name');
-                    result = await actions[sub](channel, target); // Dynamic call
-                    break;
+                    {
+                        const target = options.getString('name');
+                        result = await actions[sub](channel, target); // Dynamic call
+                        break;
+                    }
 
                 case 'rename':
-                    const newName = options.getString('name');
-                    result = await actions.rename(channel, newName);
-                    break;
+                    {
+                        const newName = options.getString('name');
+                        result = await actions.rename(channel, newName);
+                        break;
+                    }
 
                 case 'claim':
                     result = await actions.claim(channel, user);
@@ -72,7 +74,7 @@ module.exports = {
                     result = "Unknown subcommand.";
             }
 
-            
+
             // Send the result back to discord
             if (result instanceof EmbedBuilder) {
                 await interaction.reply({ embeds: [result] });

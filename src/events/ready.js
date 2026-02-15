@@ -68,7 +68,7 @@ async function updateStats(client) {
 	const ipChannel = guild.channels.cache.get(CHANNELS.IP);
 	if (ipChannel) {
 		// Falls back to a default IP if the environment variable is missing
-		const ip = process.env.MC_IP || 'hyperland.mcpro.io';
+		const ip = process.env.MC_IP || 'Soon';
 		await ipChannel.setName(`🔗 IP: ${ip}`);
 	}
 }
