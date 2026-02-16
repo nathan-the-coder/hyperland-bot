@@ -116,13 +116,13 @@ const ticketActions = {
 
 			await updateTicketMessage(channel, {
 				color: color,
-				statusField: { name: '⏳ Status', value: `Claimed by ${user}` },
+				statusField: { name: '⏳ Status', value: `Handled by ${user}` },
 				components: createTicketButtons('claimed'),
 			});
 
 			logTicketAction(interaction, color, channel);
 
-			await interaction.reply({ content: `✅ Ticket claimed by ${user}!` });
+			await interaction.reply({ content: `✅ Ticket handled by ${user}!` });
 		},
 	},
 	close: {

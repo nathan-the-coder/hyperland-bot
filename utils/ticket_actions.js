@@ -56,7 +56,7 @@ module.exports = {
         return `❌ Removed ${target} from the ticket.`;
     },
     claim: async (channel, staff) => {
-        return `👮 **Ticket claimed by ${staff}**`;
+        return `👮 **Ticket handled by ${staff}**`;
     },
     rename: async (channel, name) => {
         if (!name) return "Please provide a name.";

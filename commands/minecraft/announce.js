@@ -23,7 +23,7 @@ module.exports = {
         const role = interaction.options.getRole('ping');
 
         const embed = new EmbedBuilder()
-            .setTitle('📢 Hyperland Announcement')
+            .setTitle('📢 Hyperlands Announcement')
             .setDescription(messageText)
             .setColor(0x55FF55)
             .setTimestamp();
