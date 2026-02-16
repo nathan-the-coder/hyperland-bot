@@ -10,28 +10,34 @@ module.exports = {
 		// Handle .hln prefix command (works in any channel)
 		if (!msg.author.bot) {
 
-			if (msg.content.toLowerCase() === '.hln') {
-				try {
-					const status = await getServerStatus();
+		if (msg.content.toLowerCase() === '.hln') {
+			try {
+				const status = await getServerStatus();
 
-					const embed = new EmbedBuilder()
-						.setTitle('Server Status')
-						.setColor(0x55FF55)
-						.addFields(
-							{ name: 'Server Info', value: `**IP: soon**\n**PORT: soon**` },
-							{ name: 'Version', value: status?.version || 'Unknown', inline: true },
-							{ name: 'Server Status', value: status?.online ? '🟢 Online' : '🔴 Offline', inline: true },
-							{ name: 'Online Players', value: status?.players ? `${status.players.online}/${status.players.max}` : '0/0', inline: false }
-						)
-						.setTimestamp();
+			const playerList = (status?.sample && status.sample.length > 0) 
+				? status.sample.map(p => p.name).join('\n') 
+				: 'None';
 
-					await msg.reply({ embeds: [embed] });
-				} catch (error) {
-					console.error(error);
-					await msg.reply('Error fetching server status.');
-				}
-				return;
+				const playerHeader = `Online Players (${status.players || 0}/${status?.maxPlayers || 100})`;
+
+				const embed = new EmbedBuilder()
+					.setTitle('Hyperland Status')
+					.setColor(0x55FF55)
+					.addFields(
+						{ name: '**Server Info**', value: '**IP: hyperlandnetwork.play.hosting**\n**PORT: 20951**' },
+						{ name: 'Version', value: status?.version || '1.21.x', inline: true },
+						{ name: 'Server Status', value: status?.online ? '🟢 Online' : '🔴 Offline', inline: true },
+						{ name: playerHeader, value: playerList, inline: false }
+					)
+					.setTimestamp();
+
+				await msg.reply({ embeds: [embed] });
+			} catch (error) {
+				console.error(error);
+				await msg.reply('Error fetching server status.');
 			}
+			return;
+		}
 		}
 
 		// Ticket prefix commands (only in ticket channels)

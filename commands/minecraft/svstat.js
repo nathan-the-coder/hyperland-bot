@@ -12,23 +12,25 @@ module.exports = {
         try {
             const status = await getServerStatus();
 
-            const playerList = (status?.players?.list && status.players.list.length > 0) 
-                ? status.players.list.join('\n') 
+            const playerList = (status?.sample && status.sample.length > 0) 
+                ? status.sample.map(p => p.name).join('\n') 
                 : 'None';
 
-            const playerHeader = `Online Players (${status?.players?.online || 0}/${status?.players?.max || 0})`;
+            console.log(status);
+
+            const playerHeader = `Online Players (${status.players || 0}/${status?.maxPlayers || 100})`;
 
             const embed = new EmbedBuilder()
-                .setTitle('KitPvP Status')
+                .setTitle('Hyperland Status')
                 .setColor(0x55FF55) 
                 .addFields(
                     {
                         name: '**Server Info**',
-                        value: '**IP: soon**\n**PORT: soon**'
+                        value: '**IP: hyperlandnetwork.play.hosting**\n**PORT: 20951**'
                     },
                     {
                         name: 'Version', 
-                        value: status?.version || '26.0', 
+                        value: status?.version || '1.21.x', 
                         inline: true 
                     },
                     { 

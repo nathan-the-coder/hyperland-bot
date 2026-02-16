@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { getServerStatus } = require('../../utils/mcServer');
+const { getServerStatus } = require('../../utils/mcServer.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
