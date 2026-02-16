@@ -1,4 +1,4 @@
-const { Events, EmbedBuilder, ChannelType } = require('discord.js');
+const { Events, EmbedBuilder, ChannelType, TextDisplayBuilder } = require('discord.js');
 const actions = require('../utils/ticket_actions');
 const { getServerStatus } = require('../utils/mcServer');
 
@@ -32,13 +32,9 @@ module.exports = {
             if (!targetChannel || !messageText) {
                 return msg.reply("Usage: `.say #channel My message here` Paisano!");
             }
-
-            const embed = new EmbedBuilder()
-                .setDescription(messageText)
-                .setColor(0x55FF55);
-
+			
             try {
-                await targetChannel.send({ embeds: [embed] });
+                await targetChannel.send({ content: messageText });
                 return await msg.reply(`✅ Message sent to ${targetChannel}`);
             } catch (e) {
                 return msg.reply("I don't have permission to post there.");

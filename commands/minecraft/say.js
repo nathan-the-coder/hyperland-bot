@@ -16,17 +16,16 @@ module.exports = {
         const mentionable = interaction.options.getMentionable('mention');
         const role = interaction.options.getRole('role'); // Fixed: matched the name above
 
-        const embed = new EmbedBuilder()
-            .setDescription(messageText)
-            .setColor(0x55FF55);
+        // const embed = new EmbedBuilder()
+        //     .setDescription(messageText)
+        //     .setColor(0x55FF55);
         
         // Construct the ping string safely
         const pings = [mentionable, role].filter(p => p).map(p => p.toString()).join(' ');
 
         try {
             await channel.send({
-                content: pings,
-                embeds: [embed],
+                content: `${pings} ${messageText}`,
                 allowedMentions: { parse: ['everyone', 'roles', 'users'] }
             });
 
