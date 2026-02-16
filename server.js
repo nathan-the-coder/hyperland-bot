@@ -14,7 +14,9 @@ server.listen(PORT, () => {
     console.log(`Health check server running on port ${PORT}`);
 });
 
-require('./deploy-commands.js');
+if (process.env.DEPLOY_COMMANDS === 'true') {
+    require('./deploy-commands.js');
+}
 
 const client = new Client({
     intents: [
