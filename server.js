@@ -2,6 +2,18 @@ const { Client, Collection, Events, GatewayIntentBits, Partials } = require('dis
 require('dotenv/config');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
+
+const PORT = process.env.PORT || 3000;
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hyperland Bot is running!');
+});
+
+server.listen(PORT, () => {
+    console.log(`Health check server running on port ${PORT}`);
+});
+
 require('./deploy-commands.js');
 
 const client = new Client({

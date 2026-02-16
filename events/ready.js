@@ -3,39 +3,36 @@ const { guildId } = require('../config.json');
 const { getServerStatus, clearCache } = require('../utils/mcServer.js');
 
 async function showSupportTicket(client) {
-	const TICKET_CHANNEL_ID = '1472504353964298373';
+    const TICKET_CHANNEL_ID = '1472504353964298373';
+    const channel = await client.channels.fetch(TICKET_CHANNEL_ID);
+    if (!channel) return;
 
-	const embed = new EmbedBuilder()
-		.setTitle('🎫 Support Tickets')
-		.setDescription('Need help? Create a ticket and our staff will assist you!')
-		.setColor('Blurple');
+    const embed = new EmbedBuilder()
+        .setTitle('🎫 Support Tickets')
+        .setDescription('Need help? Create a ticket and our staff will assist you!')
+        .setColor('Blurple');
 
-	const button = new ButtonBuilder()
-		.setCustomId('create_ticket')
-		.setLabel('Create Ticket')
-		.setStyle(ButtonStyle.Primary)
-		.setEmoji('🎫');
+    const button = new ButtonBuilder()
+        .setCustomId('create_ticket')
+        .setLabel('Create Ticket')
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji('🎫');
 
-	const row = new ActionRowBuilder().addComponents(button);
+    const row = new ActionRowBuilder().addComponents(button);
 
-	const channel = await client.channels.fetch(TICKET_CHANNEL_ID);
-	if (!channel) return;
+    const messages = await channel.messages.fetch({ limit: 10 });
+    const existingTicket = messages.find(m => m.author.id === client.user.id);
 
-	const messages = await channel.messages.fetch({ limit: 10 });
-
-	// if a message from the bot already exists. don't send a new one
-	const existingTicket = messages.find(m => m.author.id === client.user.id);
-
-	if (existingTicket) {
-		console.log("Ticket message already exists. Skipping...");
-		return;
-	}
-
-	if (messages.size > 0) {
-		await channel.bulkDelete(messages);
-	}
-
-	await channel.send({ embeds: [embed], components: [row] });
+    if (existingTicket) {
+        // EDIT instead of DELETE/SEND. This keeps the original timestamp!
+        await existingTicket.edit({ embeds: [embed], components: [row] });
+        console.log("Ticket message updated (edited).");
+    } else {
+        // Only delete and send if the bot's message is missing
+        if (messages.size > 0) await channel.bulkDelete(messages);
+        await channel.send({ embeds: [embed], components: [row] });
+        console.log("New ticket message sent.");
+    }
 }
 
 const CHANNELS = {
