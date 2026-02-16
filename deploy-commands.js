@@ -1,7 +1,15 @@
 const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require('./config.json');
+const clientId = process.env.DISCORD_CLIENT_ID;
+const guildId = process.env.DISCORD_GUILD_ID;
+const token = process.env.DISCORD_TOKEN;
 const fs = require('fs');
 const path = require('path');
+
+if (!clientId || !guildId || !token) {
+    console.log('Skipping command deployment: missing DISCORD_CLIENT_ID or DISCORD_GUILD_ID');
+    module.exports = {};
+    return;
+}
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandItems = fs.readdirSync(commandsPath);
