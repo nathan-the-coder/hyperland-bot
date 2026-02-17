@@ -35,7 +35,7 @@ async function getServerStatus(forceRefresh = false) {
             online: false,
             players: 0,
             maxPlayers: 100,
-            version: 'Unknown',
+            version: '1.21.x',
             motd: '',
             sample: []
         };
