@@ -1,6 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getServerStatus } = require('../../utils/mcServer');
 
+const MC_PORT = parseInt(process.env.MC_PORT) || 25585;
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('hln')
@@ -26,7 +28,7 @@ module.exports = {
                 .addFields(
                     {
                         name: '**Server Info**',
-                        value: '**IP: hyperlandnetwork.play.hosting**\n**PORT: 20951**'
+                        value: `**IP: ${process.env.MC_IP}**\n**PORT: ${MC_PORT}**`
                     },
                     {
                         name: 'Version', 

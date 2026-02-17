@@ -32,7 +32,7 @@ const client = new Client({
         if (name === 'PresenceManager' || name === 'VoiceStateManager') {
             return new Collection({ maxSize: 0 });
         }
-        return null;
+        return new Collection();
     },
     sweepers: {
         messages: { interval: 300, filter: () => msg => Date.now() - msg.createdTimestamp > 300000 },

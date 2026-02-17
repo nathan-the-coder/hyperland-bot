@@ -5,6 +5,8 @@ const client = new JavaPingClient();
 const CACHE_TTL = 60000;
 let cache = { data: null, timestamp: 0 };
 
+const MC_PORT = parseInt(process.env.MC_PORT) || 25585;
+
 async function getServerStatus(forceRefresh = false) {
     const now = Date.now();
     
@@ -13,7 +15,7 @@ async function getServerStatus(forceRefresh = false) {
     }
 
     try {
-        const status = await client.ping(process.env.MC_IP, 25565, {
+        const status = await client.ping(process.env.MC_IP, MC_PORT, {
             signal: AbortSignal.timeout(3000)
         });
 

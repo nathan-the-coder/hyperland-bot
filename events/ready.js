@@ -1,6 +1,23 @@
 const { Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { guildId } = require('../config.json');
 const { getServerStatus, clearCache } = require('../utils/mcServer.js');
+const fs = require('fs');
+const path = require('path');
+
+const TICKET_MSG_FILE = path.join(__dirname, '../ticketMessageId.json');
+
+function getStoredTicketMessageId() {
+    try {
+        if (fs.existsSync(TICKET_MSG_FILE)) {
+            return JSON.parse(fs.readFileSync(TICKET_MSG_FILE, 'utf8')).messageId;
+        }
+    } catch (e) {}
+    return null;
+}
+
+function storeTicketMessageId(messageId) {
+    fs.writeFileSync(TICKET_MSG_FILE, JSON.stringify({ messageId }));
+}
 
 async function showSupportTicket(client) {
     const TICKET_CHANNEL_ID = '1472504353964298373';
@@ -20,19 +37,22 @@ async function showSupportTicket(client) {
 
     const row = new ActionRowBuilder().addComponents(button);
 
-    const messages = await channel.messages.fetch({ limit: 10 });
-    const existingTicket = messages.find(m => m.author.id === client.user.id);
-
-    if (existingTicket) {
-        // EDIT instead of DELETE/SEND. This keeps the original timestamp!
-        await existingTicket.edit({ embeds: [embed], components: [row] });
-        console.log("Ticket message updated (edited).");
-    } else {
-        // Only delete and send if the bot's message is missing
-        if (messages.size > 0) await channel.bulkDelete(messages);
-        await channel.send({ embeds: [embed], components: [row] });
-        console.log("New ticket message sent.");
+    const storedId = getStoredTicketMessageId();
+    if (storedId) {
+        try {
+            const existingMessage = await channel.messages.fetch(storedId);
+            await existingMessage.edit({ embeds: [embed], components: [row] });
+            console.log("Ticket message updated (by stored ID).");
+            return;
+        } catch (e) {
+            console.log("Stored ticket message not found, creating new one.");
+        }
     }
+
+    await channel.send({ embeds: [embed], components: [row] }).then(msg => {
+        storeTicketMessageId(msg.id);
+    });
+    console.log("New ticket message sent.");
 }
 
 const CHANNELS = {
