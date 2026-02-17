@@ -70,7 +70,6 @@ web_modules/
 .parcel-cache
 
 # discod bot config 
-config.json
 ticketMessageId.json
 
 # Next.js build output

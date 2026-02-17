@@ -1,5 +1,5 @@
 const { Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { guildId } = require('../config.json');
+const GUILD_ID = process.env.GUILD_ID;
 const { getServerStatus, clearCache } = require('../utils/mcServer.js');
 const fs = require('fs');
 const path = require('path');
@@ -62,7 +62,7 @@ const CHANNELS = {
 };
 
 async function updateStats(client) {
-	const guild = client.guilds.cache.get(guildId);
+	const guild = client.guilds.cache.get(GUILD_ID);
 	if (!guild) return;
 
 	try {
