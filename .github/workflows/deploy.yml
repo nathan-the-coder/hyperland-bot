@@ -1,0 +1,21 @@
+name: Deploy to FPS.ms
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restart server via Pterodactyl API
+        run: |
+          curl -X POST "${{ secrets.FPS_PANEL_URL }}/api/client/servers/${{ secrets.FPS_SERVER_ID }}/power" \
+            -H "Authorization: Bearer ${{ secrets.FPS_API_KEY }}" \
+            -H "Accept: application/vnd.pterodactyl.v1+json" \
+            -H "Content-Type: application/json" \
+            -d '{"signal": "restart"}' \
+            --fail-with-body
+      - name: Deployment status
+        run: echo "Restart signal sent to FPS.ms server"
