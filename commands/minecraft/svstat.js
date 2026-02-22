@@ -13,7 +13,12 @@ module.exports = {
         await interaction.deferReply();
 
         try {
-            const status = await getServerStatus();
+            const status = await Promise.race([
+                getServerStatus(),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Request timeout')), 5000)
+                )
+            ]);
 
             const playerList = (status?.sample && status.sample.length > 0) 
                 ? status.sample.map(p => p.name).join('\n') 
@@ -50,7 +55,18 @@ module.exports = {
             await interaction.editReply({ embeds: [embed] });
         } catch (error) {
             console.error(error);
-            await interaction.editReply('Error fetching server status.');
+            await interaction.editReply({ 
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle('Hyperland Status')
+                        .setColor(0xFF5555)
+                        .addFields(
+                            { name: '**Server Info**', value: `**IP: ${MC_IP}**\n**PORT: ${MC_PORT}**` },
+                            { name: 'Server Status', value: '🔴 Unable to reach server', inline: true }
+                        )
+                        .setTimestamp()
+                ]
+            });
         }
     },
 };
