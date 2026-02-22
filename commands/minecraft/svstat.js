@@ -18,8 +18,6 @@ module.exports = {
                 ? status.sample.map(p => p.name).join('\n') 
                 : 'None';
 
-            console.log(status);
-
             const playerHeader = `Online Players (${status.players || 0}/${status?.maxPlayers || 100})`;
 
             const embed = new EmbedBuilder()

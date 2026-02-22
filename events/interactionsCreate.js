@@ -90,21 +90,36 @@ async function updateTicketMessage(channel, updates) {
 	return ticketMessage;
 }
 
-async function logTicketAction(interaction, color, channel) {
+async function logTicketAction(interaction, action, color, channel, reason = null) {
 	const logChannel = interaction.guild.channels.cache.get(process.env.TICKET_LOG_CHANNEL_ID);
+	if (!logChannel) return;
 
-	// Create log embed
-	const logEmbed = new EmbedBuilder()
-		.setTitle('Ticket Action')
+	const actionEmojis = {
+		claim: '🎟️ Claimed',
+		close: '🔒 Closed',
+		reopen: '🔓 Reopened',
+		delete: '🗑️ Deleted',
+		create: '🎫 Created',
+	};
+
+	const embed = new EmbedBuilder()
+		.setAuthor({
+			name: `Ticket ${actionEmojis[action] || action}`,
+			iconURL: interaction.user.displayAvatarURL({ dynamic: true }),
+		})
 		.setColor(color)
 		.addFields(
-			{ name: 'Action', value: 'claim/close/reopen/delete' },
-			{ name: 'User', value: interaction.user.tag },
-			{ name: 'Channel', value: channel.name }
-		);
+			{ name: '👤 Moderator', value: `${interaction.user}\n\`${interaction.user.tag}\``, inline: true },
+			{ name: '📂 Channel', value: `\`${channel.name}\``, inline: true },
+		)
+		.setTimestamp()
+		.setFooter({ text: 'Hyperland Network • Ticket Logs' });
 
-	// Send to log channel
-	if (logChannel) await logChannel.send({ embeds: [logEmbed] });
+	if (reason) {
+		embed.addFields({ name: '📝 Reason', value: reason, inline: false });
+	}
+
+	await logChannel.send({ embeds: [embed] });
 }
 
 const ticketActions = {
@@ -120,7 +135,7 @@ const ticketActions = {
 				components: createTicketButtons('claimed'),
 			});
 
-			logTicketAction(interaction, color, channel);
+			logTicketAction(interaction, 'claim', color, channel);
 
 			await interaction.reply({ content: `✅ Ticket handled by ${user}!` });
 		},
@@ -143,7 +158,7 @@ const ticketActions = {
 				await channel.setName(`closed-${channel.name.slice(7)}`);
 			}
 
-			logTicketAction(interaction, color, channel);
+			logTicketAction(interaction, 'close', color, channel, reason);
 
 			await interaction.editReply({ content: `✅ Ticket closed! Reason: ${reason}` });
 		},
@@ -153,10 +168,10 @@ const ticketActions = {
 		handler: async (interaction) => {
 			const reason = interaction.fields.getTextInputValue('reason');
 			const channel = interaction.channel;
-			const color = 0xFFA500;
+			const color = 0x00FF00;
 			
 			await updateTicketMessage(channel, {
-				color: 0xFFA500,
+				color: 0x00FF00,
 				statusField: { name: '🟡 Status', value: 'Reopened' },
 				reasonField: { name: '📝 Reopen Reason', value: reason },
 				components: createTicketButtons('reopened'),
@@ -166,7 +181,7 @@ const ticketActions = {
 				await channel.setName(`ticket-${channel.name.slice(7)}`);
 			}
 
-			logTicketAction(interaction, color, channel);
+			logTicketAction(interaction, 'reopen', color, channel, reason);
 
 			await interaction.editReply({ content: `✅ Ticket reopened! Reason: ${reason}` });
 		},
@@ -178,7 +193,7 @@ const ticketActions = {
 			const channel = interaction.channel;
 			const user = interaction.user;
 
-			logTicketAction(interaction, 0xFF0000, channel);
+			logTicketAction(interaction, 'delete', 0xFF0000, channel, reason);
 
 			await channel.send(`🗑️ Ticket deleted by ${user}. Reason: ${reason}`);
 			await channel.delete();
@@ -258,6 +273,8 @@ module.exports = {
 					embeds: [embed],
 					components: createTicketButtons('open'),
 				});
+
+				logTicketAction(interaction, 'create', 0x00FF00, channel, reason);
 
 				await interaction.editReply({ content: `Ticket created: ${channel}` });
 				return;

@@ -49,6 +49,15 @@ async function showSupportTicket(client) {
         }
     }
 
+    const messages = await channel.messages.fetch({ limit: 20 });
+    const oldTicketMessages = messages.filter(m => 
+        m.author.id === client.user.id && 
+        m.embeds[0]?.title?.includes('Support Tickets')
+    );
+    if (oldTicketMessages.size > 0) {
+        await channel.bulkDelete(oldTicketMessages);
+    }
+
     await channel.send({ embeds: [embed], components: [row] }).then(msg => {
         storeTicketMessageId(msg.id);
     });

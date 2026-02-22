@@ -16,7 +16,7 @@ async function getServerStatus(forceRefresh = false) {
 
     try {
         const status = await client.ping(process.env.MC_IP, MC_PORT, {
-            signal: AbortSignal.timeout(3000)
+            signal: AbortSignal.timeout(2000)
         });
 
         const result = {
