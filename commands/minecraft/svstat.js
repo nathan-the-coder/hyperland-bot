@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { getServerStatus } = require('../../utils/mcServer');
 
+const MC_IP = process.env.MC_IP || 'hyperlands.playmc.cloud';
 const MC_PORT = parseInt(process.env.MC_PORT) || 25585;
 
 module.exports = {
@@ -26,7 +27,7 @@ module.exports = {
                 .addFields(
                     {
                         name: '**Server Info**',
-                        value: `**IP: ${process.env.MC_IP}**\n**PORT: ${MC_PORT}**`
+                        value: `**IP: ${MC_IP}**\n**PORT: ${MC_PORT}**`
                     },
                     {
                         name: 'Version', 

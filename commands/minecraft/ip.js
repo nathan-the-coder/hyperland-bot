@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
+const MC_IP = process.env.MC_IP || 'hyperlands.playmc.cloud';
 const MC_PORT = parseInt(process.env.MC_PORT) || 25585;
 
 module.exports = {
@@ -10,7 +11,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setTitle('🎮 Server IP')
             .setColor(0x55FF55)
-            .setDescription(`**${process.env.MC_IP}:${MC_PORT}**`)
+            .setDescription(`**${MC_IP}:${MC_PORT}**`)
             .setFooter({ text: 'Hyperland Network' });
 
         await interaction.reply({ embeds: [embed] });

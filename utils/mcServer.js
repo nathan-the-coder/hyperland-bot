@@ -5,6 +5,7 @@ const client = new JavaPingClient();
 const CACHE_TTL = 60000;
 let cache = { data: null, timestamp: 0 };
 
+const MC_IP = process.env.MC_IP || 'hyperlands.playmc.cloud';
 const MC_PORT = parseInt(process.env.MC_PORT) || 25585;
 
 async function getServerStatus(forceRefresh = false) {
@@ -15,7 +16,7 @@ async function getServerStatus(forceRefresh = false) {
     }
 
     try {
-        const status = await client.ping(process.env.MC_IP, MC_PORT, {
+        const status = await client.ping(MC_IP, MC_PORT, {
             signal: AbortSignal.timeout(2000)
         });
 
