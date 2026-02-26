@@ -91,7 +91,7 @@ class Commands(commands.Cog):
         store_ticket_message_id(message.id)
         await interaction.response.send_message("Ticket panel sent!", ephemeral=True)
 
-    @setup.error
+    @setup.error # pyright: ignore[reportFunctionMemberAccess]
     async def setup_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.MissingPermissions):
             await interaction.response.send_message(

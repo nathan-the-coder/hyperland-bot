@@ -11,5 +11,5 @@ STAFF_ROLE_ID = (
 )
 TICKET_CATEGORY_ID = int(os.getenv("TICKET_CATEGORY_ID", "1472502858443133045"))
 
-MC_IP = os.getenv("MC_IP", "hyperlands.playmc.cloud")
+MC_IP = os.getenv("MC_IP", "hyperlandsnetwork.playmc.cloud")
 MC_PORT = int(os.getenv("MC_PORT", 25585))
